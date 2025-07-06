@@ -1,24 +1,27 @@
 from flask import Flask, redirect, render_template, request, session, url_for
-from dotenv import load_dotenv
 from gspread import authorize
 from google.oauth2.service_account import Credentials
-from pathlib import Path
-from os import getenv
+from os import environ
+# from pathlib import Path
+# from dotenv import load_dotenv
+# from os import getenv
 
 
 app = Flask(__name__)
 
-env_file_path = Path('private/.env')
-load_dotenv(env_file_path)
+# env_file_path = Path('private/.env')
+# load_dotenv(env_file_path)
 
-gsheets_scopes = [getenv('GSHEETS_SCOPES')]
+app.secret_key = environ.get('FLASK_SECRET_KEY')
+
+gsheets_scopes = [environ.get('GSHEETS_SCOPES')]
 gsheets_credentials = Credentials.from_service_account_file(
-    getenv('GSHEETS_CREDENTIALS'), scopes=gsheets_scopes)
+    environ.get('GSHEETS_CREDENTIALS'), scopes=gsheets_scopes)
 
 gsheets = authorize(gsheets_credentials)
 
-WORKBOOK_IDS = (getenv('GSHEETS_WORKBOOK_ID_EASY'), getenv(
-    'GSHEETS_WORKBOOK_ID_MEDIUM'), getenv('GSHEETS_WORKBOOK_ID_HARD'))
+WORKBOOK_IDS = (environ.get('GSHEETS_WORKBOOK_ID_EASY'), environ.get(
+    'GSHEETS_WORKBOOK_ID_MEDIUM'), environ.get('GSHEETS_WORKBOOK_ID_HARD'))
 
 workbooks = {}
 
@@ -31,21 +34,18 @@ for wb_id in WORKBOOK_IDS:
 
 
 def list_sheets(workbook):
-    """List sheet names in the given workbook"""
     return [ws.title for ws in workbook.worksheets()]
 
 
 def get_sheet(workbook, sheet_name):
-    """Get a worksheet object by name"""
     return workbook.worksheet(sheet_name)
 
 
 def read_sheet_data(sheet):
-    """Read all records from a sheet"""
     return sheet.get_all_records()
 
 
-app.secret_key = getenv('FLASK_SECRET_KEY')
+# --------- S E R V E R C O D E --------- #
 
 
 @app.route("/sign-in", methods=["POST"])
@@ -78,7 +78,7 @@ def view_sheet(workbook_id, sheet_name):
     if not workbook_entry:
         return f"Workbook with ID {workbook_id} not found", 404
 
-    workbook = workbook_entry['object']  # ✅ use the real object!
+    workbook = workbook_entry['object']
 
     try:
         sheet = get_sheet(workbook, sheet_name)
