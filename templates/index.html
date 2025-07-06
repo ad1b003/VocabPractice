@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/pico.green.min.css">
+    <title>VocabPractice</title>
+</head>
+
+<body class="container">
+    <header>
+        <nav>
+            <ul>
+                <li><strong>VocabPractice</strong></li>
+            </ul>
+            <ul>
+                <li><a class="contrast" href="/sign-out">sign out</a></li>
+            </ul>
+        </nav>
+    </header>
+    <hr>
+    <main>
+        {% for wb_id, workbook in workbooks.items() %}
+        <details>
+            <summary>{{ workbook.title }}</summary>
+            <ul>
+                {% for sheet in list_sheets(workbook.object) %}
+                <li>
+                    <a href="{{ url_for('view_sheet', workbook_id=wb_id, sheet_name=sheet) }}">
+                        {{ sheet }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </details>
+        <br>
+        {% endfor %}
+    </main>
+    <!-- <script>
+        window.onload = function() {
+            alert("Welcome back, {{ session.get('user') }}!");
+        }
+    </script> -->
+</body>
+
+</html>

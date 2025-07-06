@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/pico.green.min.css">
+    <title>{{ sheet_name }}</title>
+</head>
+
+<body class="container">
+    <header>
+        <h2>Sheet: {{ sheet_name }}</h2>
+        <a href="/">Back to home</a>
+    </header>
+    <main>
+        <table class="striped">
+            <thead>
+                {% if data %}
+                <tr>
+                    {% for key in data[0].keys() %}
+                    <th>{{ key }}</th>
+                    {% endfor %}
+                </tr>
+                {% endif %}
+            </thead>
+            <tbody>
+                {% for row in data %}
+                <tr>
+                    {% for value in row.values() %}
+                    <td>
+                        {% if '|' in value %}
+                        <ul>
+                            {% for line in value.split('|') %}
+                            <li>{{ line.strip() }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% else %}
+                        {{ value }}
+                        {% endif %}
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+</body>
+
+</html>
